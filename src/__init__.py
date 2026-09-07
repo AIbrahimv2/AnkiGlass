@@ -226,7 +226,6 @@ def on_state_will_change(new_state: str, old_state: str) -> None:
 # NSGlassEffectView in dark mode; light mode inverts to a dark edge on a pale
 # fill. Anki puts `night-mode` on :root, so these follow the theme.
 GLASS_COMMON_CSS = """
-html{background:var(--lg-tint) !important}
 body{background:transparent !important}
 :root{--lg-fill:rgba(255,255,255,.38);--lg-hover:rgba(255,255,255,.55);
       --lg-hi:rgba(0,0,0,.12);--lg-shadow:rgba(0,0,0,.18)}
@@ -263,7 +262,6 @@ button:focus{box-shadow:inset 0 0 0 1px var(--border-focus),0 4px 12px var(--lg-
 # that normally paints an opaque canvas -- body, Anki's #qa, the note type's
 # .card -- made transparent so the glass reads through the tint.
 GLASS_CONTENT_CSS = """
-html{background:var(--lg-tint) !important}
 body,#qa,.card,#qa>*{background:transparent !important;background-color:transparent !important}
 html body[class][class][class][class]{background:transparent !important;
   background-color:transparent !important;background-image:none !important}
@@ -365,6 +363,38 @@ def on_state_did_change(new_state: str, old_state: str) -> None:
 
 
 # --- AppKit glass ------------------------------------------------------------
+
+def _parse_rgba(s: str):
+    """'rgba(0,0,0,0.28)' -> (r, g, b, a) as 0-1 floats."""
+    import re
+
+    m = re.match(r"\s*rgba?\(([^)]+)\)", s or "")
+    if not m:
+        return (0.0, 0.0, 0.0, 0.28)
+    vals = [float(x) for x in m.group(1).split(",")]
+    r, g, b = vals[0] / 255.0, vals[1] / 255.0, vals[2] / 255.0
+    a = vals[3] if len(vals) > 3 else 1.0
+    return (r, g, b, a)
+
+
+def tint_nscolor(ob):
+    """The theme tint as a semi-transparent NSColor, used for the main window's
+    background so the titlebar and the transparent webviews are tinted by ONE
+    uniform layer over untinted glass (tinting the glass material itself draws
+    a dark rim around every glass shape, which we don't want)."""
+    try:
+        from aqt.theme import theme_manager
+
+        night = theme_manager.night_mode
+    except Exception:
+        night = True
+    t = CONFIG["glass_tint"]
+    r, g, b, a = _parse_rgba(t["night"] if night else t["light"])
+    return ob.msg(
+        ob.cls("NSColor"), "colorWithSRGBRed:green:blue:alpha:", r, g, b, a,
+        argtypes=[ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double],
+    )
+
 
 def build_glass(ob, bounds):
     glass_cls = ob.cls("NSGlassEffectView")
@@ -472,7 +502,8 @@ def build_separate_glass_window() -> None:
     # Main window see-through so the glass behind shows; alpha surface (above)
     # keeps clears working so nothing ghosts.
     ob.msg(main_win, "setOpaque:", False, restype=None, argtypes=[ctypes.c_bool])
-    ob.msg(main_win, "setBackgroundColor:", clear,
+    tint_col = tint_nscolor(ob) or clear
+    ob.msg(main_win, "setBackgroundColor:", tint_col,
            restype=None, argtypes=[ctypes.c_void_p])
     ob.msg(main_win, "setTitlebarAppearsTransparent:", True,
            restype=None, argtypes=[ctypes.c_bool])

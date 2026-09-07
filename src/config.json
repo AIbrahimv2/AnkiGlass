@@ -1,7 +1,11 @@
 {
-  "glass_screens": ["deckBrowser", "overview", "review"],
+  "glass_screens": [
+    "deckBrowser",
+    "overview",
+    "review"
+  ],
   "glass_card": true,
-  "tint_dark": "rgba(0,0,0,0.28)",
+  "tint_dark": "rgba(0,0,0,0.38)",
   "tint_light": "rgba(255,255,255,0.35)",
   "debug_log": false
 }
