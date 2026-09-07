@@ -2,7 +2,7 @@
 
 **Title:** AnkiGlass
 
-**Support page / more info URL:** https://github.com/AIbrahimv2/anki-glass
+**Support page / more info URL:** https://github.com/AIbrahimv2/AnkiGlass
 
 **Tags:** macos, appearance, theme, liquid-glass, ui
 
@@ -39,4 +39,4 @@ Tools → AnkiGlass.
   AnkiGlass clears canvas-sized backgrounds automatically, but for unusual
   templates you can set "glass_card" to false to glass only the bars.
 
-Source, issues, and updates: https://github.com/AIbrahimv2/anki-glass
+Source, issues, and updates: https://github.com/AIbrahimv2/AnkiGlass
