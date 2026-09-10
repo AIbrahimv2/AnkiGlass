@@ -272,10 +272,13 @@ html body[class][class][class][class]{background:transparent !important;
 # same --lg-fill and 1px edge as the top bar so the box matches the glass there.
 # Scoped to the deck browser only, so tables inside review cards are untouched.
 GLASS_DECK_CSS = """
-:root{--lg-fill:rgba(255,255,255,.38);--lg-hi:rgba(0,0,0,.12)}
-:root.night-mode{--lg-fill:rgba(255,255,255,.08);--lg-hi:rgba(255,255,255,.18)}
+:root{--lg-fill:rgba(255,255,255,.38);--lg-hover:rgba(255,255,255,.55);--lg-hi:rgba(0,0,0,.12)}
+:root.night-mode{--lg-fill:rgba(255,255,255,.08);--lg-hover:rgba(255,255,255,.15);
+  --lg-hi:rgba(255,255,255,.18)}
 .fancy table{background:var(--lg-fill) !important;border:none !important;
   box-shadow:inset 0 0 0 1px var(--lg-hi) !important}
+th{border-bottom-color:var(--lg-hi) !important}
+.current td,tr:hover:not(.top-level-drag-row) td{background:var(--lg-hover) !important}
 """
 
 CONTENT_UNCOVER_JS = r"""
