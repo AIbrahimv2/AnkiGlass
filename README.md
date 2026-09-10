@@ -1,4 +1,3 @@
-<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 06 39" src="https://github.com/user-attachments/assets/79d091a3-07e7-493b-b6ef-8847524203f0" />
 # AnkiGlass
 
 Native macOS **Liquid Glass** for [Anki](https://apps.ankiweb.net/). AnkiGlass
@@ -11,10 +10,9 @@ with frosted toolbar and bottom-bar controls and a theme-aware tint.
 
 ## Screenshots
 
-<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 04 10" src="https://github.com/user-attachments/assets/678ff45c-b262-49bd-a36d-943fbe8a74e9" />
-<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 07 04" src="https://github.com/user-attachments/assets/69c2b21c-4a2a-456e-b90c-b475f38c6885" />
 <img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 06 39" src="https://github.com/user-attachments/assets/c82c5078-d561-4fa1-bf7e-1bb67de85388" />
-
+<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 07 04" src="https://github.com/user-attachments/assets/69c2b21c-4a2a-456e-b90c-b475f38c6885" />
+<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 04 10" src="https://github.com/user-attachments/assets/678ff45c-b262-49bd-a36d-943fbe8a74e9" />
 
 ## Install
 
