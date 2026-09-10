@@ -267,6 +267,17 @@ html body[class][class][class][class]{background:transparent !important;
   background-color:transparent !important;background-image:none !important}
 """
 
+# Deck list card: Anki paints `.fancy table` with its own --canvas-glass
+# (rgba(54,54,54,.4) in dark), which reads darker than the toolbar. Give it the
+# same --lg-fill and 1px edge as the top bar so the box matches the glass there.
+# Scoped to the deck browser only, so tables inside review cards are untouched.
+GLASS_DECK_CSS = """
+:root{--lg-fill:rgba(255,255,255,.38);--lg-hi:rgba(0,0,0,.12)}
+:root.night-mode{--lg-fill:rgba(255,255,255,.08);--lg-hi:rgba(255,255,255,.18)}
+.fancy table{background:var(--lg-fill) !important;border:none !important;
+  box-shadow:inset 0 0 0 1px var(--lg-hi) !important}
+"""
+
 CONTENT_UNCOVER_JS = r"""
 (function(){
   var vw=window.innerWidth, vh=window.innerHeight, area=vw*vh, hits=[];
@@ -342,7 +353,10 @@ def tint_css() -> str:
 
 def glass_css_for(ctx: str) -> str:
     if ctx in CONTENT_CONTEXTS:
-        return tint_css() + GLASS_CONTENT_CSS
+        css = tint_css() + GLASS_CONTENT_CSS
+        if ctx == "DeckBrowser":
+            css += GLASS_DECK_CSS
+        return css
     is_bottom = "BottomBar" in ctx or "BottomToolbar" in ctx
     return tint_css() + GLASS_COMMON_CSS + (GLASS_BOTTOM_CSS if is_bottom else GLASS_TOP_CSS)
 
