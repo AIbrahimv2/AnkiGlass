@@ -95,6 +95,7 @@ NSWindowAbove = 1
 NSWindowBelow = -1
 NSBackingStoreBuffered = 2
 NSWindowStyleMaskBorderless = 0
+NSWindowStyleMaskFullScreen = 1 << 14
 NSVisualEffectBlendingModeBehindWindow = 0
 NSVisualEffectStateActive = 1
 NSVisualEffectMaterialUnderWindowBackground = 21
@@ -214,10 +215,16 @@ def set_strips_body_js(on: bool) -> None:
             log(f"body js {name}: FAILED ({e})")
 
 
+def glass_hidden() -> bool:
+    """The glass is taken away while Anki is full screen (see sync_glass_frame)."""
+    return _state.get("window_glass") is False
+
+
 def on_state_will_change(new_state: str, old_state: str) -> None:
     # Before the new state draws its bars, so the first paint already has the
     # right page background (transparent entering review, stock leaving it).
-    set_strips_glass(new_state in CONFIG["glass_states"], f"{old_state} -> {new_state}")
+    on = new_state in CONFIG["glass_states"] and not glass_hidden()
+    set_strips_glass(on, f"{old_state} -> {new_state}")
 
 
 # --- glass CSS ---------------------------------------------------------------
@@ -436,12 +443,78 @@ def build_glass(ob, bounds):
 
 # --- separate glass window (no re-parent; hover-safe) ------------------------
 
-def sync_glass_frame(*_) -> None:
+def is_fullscreen() -> bool:
+    """Anki is full screen: macOS's own (the green button, View > Full Screen),
+    which sets the window's full-screen style from the start of the animation,
+    or Qt's."""
+    import objc_bridge as ob
+    from aqt import mw
+
+    main_win = _state.get("main_win")
+    if main_win:
+        mask = ob.msg(main_win, "styleMask", restype=ctypes.c_ulong)
+        if mask & NSWindowStyleMaskFullScreen:
+            return True
+    return bool(mw.isFullScreen())
+
+
+def set_window_glass(on: bool, why: str) -> None:
+    """Put the glass window back behind Anki (on), or take it away and give Anki
+    its normal opaque window (off)."""
     import objc_bridge as ob
 
     main_win = _state.get("main_win")
     glass_win = _state.get("glass_win")
+    if not (main_win and glass_win) or glass_hidden() == (not on):
+        return
+    _state["window_glass"] = on
+    if on:
+        frame = ob.msg(main_win, "frame", restype=ob.CGRect)
+        ob.msg(glass_win, "setFrame:display:", frame, True,
+               restype=None, argtypes=[ob.CGRect, ctypes.c_bool])
+        ob.msg(main_win, "addChildWindow:ordered:", glass_win, NSWindowBelow,
+               restype=None, argtypes=[ctypes.c_void_p, ctypes.c_long])
+        ob.msg(main_win, "setOpaque:", False, restype=None, argtypes=[ctypes.c_bool])
+        ob.msg(main_win, "setBackgroundColor:", tint_nscolor(ob) or ob.msg(ob.cls("NSColor"), "clearColor"),
+               restype=None, argtypes=[ctypes.c_void_p])
+    else:
+        ob.msg(main_win, "removeChildWindow:", glass_win,
+               restype=None, argtypes=[ctypes.c_void_p])
+        ob.msg(glass_win, "orderOut:", None, restype=None, argtypes=[ctypes.c_void_p])
+        ob.msg(main_win, "setOpaque:", True, restype=None, argtypes=[ctypes.c_bool])
+        ob.msg(main_win, "setBackgroundColor:", ob.msg(ob.cls("NSColor"), "windowBackgroundColor"),
+               restype=None, argtypes=[ctypes.c_void_p])
+    set_strips_glass(on and in_glass_state(), why)
+    log(f"window glass {'ON' if on else 'OFF'} ({why})")
+
+
+def _restore_after_fullscreen() -> None:
+    _state.pop("restore_pending", None)
+    if _state.get("main_win") and not is_fullscreen():
+        set_window_glass(True, "left full screen")
+
+
+def sync_glass_frame(*_) -> None:
+    """Keep the glass window on the main window's frame, and take it away in
+    full screen. There, macOS puts child windows in front of their parent, so
+    the glass blurred all of Anki; and with no desktop behind a full-screen
+    window, there's nothing for glass to show anyway."""
+    import objc_bridge as ob
+    from aqt.qt import QTimer
+
+    main_win = _state.get("main_win")
+    glass_win = _state.get("glass_win")
     if not (main_win and glass_win):
+        return
+    if is_fullscreen():
+        set_window_glass(False, "full screen")
+        return
+    if glass_hidden():
+        # Leaving full screen: bring the glass back once the animation is
+        # over, not while the window is still in the full-screen space.
+        if not _state.get("restore_pending"):
+            _state["restore_pending"] = True
+            QTimer.singleShot(800, _restore_after_fullscreen)
         return
     frame = ob.msg(main_win, "frame", restype=ob.CGRect)
     ob.msg(glass_win, "setFrame:display:", frame, True,
