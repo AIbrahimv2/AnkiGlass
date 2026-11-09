@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Full screen no longer blurs the whole window. In full screen macOS put the
+  glass in front of Anki instead of behind it, so AnkiGlass now gives Anki its
+  normal solid window there, and brings the glass back once you leave full
+  screen.
+
 ## 1.0.0
 - Initial release.
 - Native macOS Liquid Glass (`NSGlassEffectView`, macOS 26 Tahoe) behind Anki's
