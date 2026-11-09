@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 - 2026-11-09
+
+### Changed
+- The deck list's card is the same glass as the toolbar, instead of Anki's own
+  darker fill, and its header line and the hovered or selected row match it.
 
 ### Fixed
 - Full screen no longer blurs the whole window. In full screen macOS put the
