@@ -7,9 +7,8 @@ falling back to NSVisualEffectView vibrancy on older macOS. The glass lives in a
 borderless child window pinned behind a transparent main window, so Qt keeps
 ownership of its own view and mouse/hover behaviour is unaffected.
 
-macOS only; on other platforms the add-on loads and does nothing. Toggle at
-runtime from Tools -> AnkiGlass. Tint, which screens, and card glass are set in
-its Settings (Tools -> AnkiGlass: settings and what's new, or Anki's Config
+macOS only; on other platforms the add-on loads and does nothing. Tint, which
+screens, card glass and turning it off are in its Settings (Anki's Config
 button for the add-on), the shared add-on kit's window (src/kit/,
 settings_schema.py).
 """
@@ -72,7 +71,7 @@ CONFIG = {
 
 _state: dict = {}
 _orig_bg: dict = {}
-# Turned off for the session: no glass, on any screen, until Anki restarts.
+# Turned off from Settings: no glass, on any screen, until Anki restarts.
 _turned_off = False
 
 
@@ -640,45 +639,63 @@ def revert() -> None:
     log("reverted")
 
 
-def disable_permanently() -> None:
+def glass_on() -> bool:
+    return _state.get("strategy") == "separate"
+
+
+def _refresh_screen() -> None:
+    """Redraw the deck list or overview without the glass."""
+    from aqt import mw
+
+    if mw.state == "deckBrowser":
+        mw.deckBrowser.refresh()
+    elif mw.state == "overview":
+        mw.overview.refresh()
+
+
+# --- the Settings window's buttons (settings_schema.schema) ---------------------
+
+
+def turn_off_now() -> str:
+    if glass_on():
+        revert()
+        _refresh_screen()
+    return "Turned off until you restart Anki."
+
+
+def keep_off() -> str:
     try:
         with open(DISABLE_PATH, "w") as f:
-            f.write("delete this file, or toggle in the add-on config, to re-enable")
-    except Exception:
+            f.write(
+                "AnkiGlass stays off while this file is here. Turn it back on in its "
+                "settings (Tools > Add-ons > AnkiGlass > Config), or delete this file.\n"
+            )
+    except OSError as e:
+        return f"Couldn't turn it off: {e}"
+    if glass_on():
+        revert()
+        _refresh_screen()
+    return "Turned off. It stays off until you turn it back on here."
+
+
+def turn_back_on() -> str:
+    try:
+        os.remove(DISABLE_PATH)
+    except FileNotFoundError:
         pass
-    from aqt.utils import showInfo
+    except OSError as e:
+        return f"Couldn't turn it back on: {e}"
+    return "Turned back on. Restart Anki to get the glass."
 
-    showInfo("AnkiGlass disabled. Restart Anki to get the normal interface.")
 
-
-def _show_log() -> None:
+def show_log() -> None:
     from aqt.utils import showText
 
     try:
         body = open(LOG_PATH).read()
     except Exception as e:
-        body = f"no log ({e}). Enable 'debug_log' in the add-on config."
+        body = f"No log yet ({e})."
     showText(body, title="AnkiGlass log", minWidth=760)
-
-
-def add_menu() -> None:
-    from aqt import mw
-    from aqt.qt import QAction
-
-    from . import kit
-
-    items = [
-        ("AnkiGlass: settings and what's new", lambda: kit.open_page(tab="settings")),
-        ("AnkiGlass: turn off (this session)", revert),
-        ("AnkiGlass: disable until re-enabled", disable_permanently),
-    ]
-    if DEBUG:
-        items.append(("AnkiGlass: show log", _show_log))
-    mw.form.menuTools.addSeparator()
-    for label, fn in items:
-        act = QAction(label, mw)
-        act.triggered.connect(fn)
-        mw.form.menuTools.addAction(act)
 
 
 def on_main_window_did_init() -> None:
@@ -687,13 +704,11 @@ def on_main_window_did_init() -> None:
     if ADDON_DIR not in sys.path:
         sys.path.insert(0, ADDON_DIR)
     if os.path.exists(DISABLE_PATH):
-        add_menu()
         return
     # Crash guard: if a previous apply killed the process, the marker survives
     # and we skip this launch so the user isn't locked into a broken state.
     if os.path.exists(MARKER_PATH):
         log("skipping apply: leftover marker -> previous attempt did not finish")
-        add_menu()
         return
     try:
         with open(MARKER_PATH, "w") as f:
@@ -706,7 +721,6 @@ def on_main_window_did_init() -> None:
             os.remove(MARKER_PATH)
         except OSError:
             pass
-    add_menu()
 
 
 def _install() -> None:
@@ -753,15 +767,26 @@ def _install() -> None:
 
 
 def _register_kit() -> None:
-    """The shared add-on kit: Settings, What's new and About in its window
-    (also on Anki's Config button), and the notice after updates."""
+    """The shared add-on kit: Settings (with turning it off), What's new and
+    About in its window on Anki's Config button, and the notice after
+    updates."""
     try:
         from aqt import mw
 
         from . import kit
-        from .settings_schema import NOTE, SCHEMA
+        from .settings_schema import NOTE, schema
 
-        kit.register("glass", schema=SCHEMA, note=NOTE)
+        kit.register(
+            "glass",
+            schema=lambda: schema(glass_on(), os.path.exists(DISABLE_PATH), DEBUG),
+            note=NOTE,
+            actions={
+                "off_now": turn_off_now,
+                "keep_off": keep_off,
+                "turn_back_on": turn_back_on,
+                "show_log": show_log,
+            },
+        )
         mw.addonManager.setConfigAction(__name__, lambda: kit.open_page(tab="settings"))
     except Exception:
         log("kit setup FAILED:\n" + traceback.format_exc())

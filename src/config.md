@@ -10,8 +10,9 @@ Changes apply on the next Anki restart.
 - **tint_dark** / **tint_light** — the tint painted over the glass in dark and
   light mode, as any CSS colour. Raise the alpha (e.g. `rgba(0,0,0,0.4)`) for
   more contrast behind text; use `"transparent"` for raw, untinted glass.
-- **debug_log** — `true` writes a log to `user_files/anki_glass.log` and adds a
-  "show log" item under Tools → AnkiGlass. Leave `false` for normal use.
+- **debug_log** — `true` writes a log to `user_files/anki_glass.log`, and after a
+  restart AnkiGlass's Settings get a button that shows it. Leave `false` for
+  normal use.
 
 macOS only. On macOS 26 (Tahoe) you get real Liquid Glass; older macOS falls
 back to a vibrancy (frosted) effect. On Windows/Linux the add-on does nothing.

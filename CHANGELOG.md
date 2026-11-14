@@ -5,13 +5,18 @@
 ### Added
 - **Settings in a window of their own**, instead of Anki's raw config text:
   which screens get glass, glass behind the card, the tints and the log. Open
-  it from Tools → AnkiGlass: settings and what's new, or the Config button in
-  Tools → Add-ons.
+  it from the Config button in Tools → Add-ons.
+- Turning it off is in Settings too, for now or until you turn it back on
+  there (which you can now do without deleting a file).
 - The same window has What's new (this list of changes) and About (links,
   whether AnkiWeb has an update, and AIbrahimv2's other Anki add-ons, with an
   Install button).
 - When any of AIbrahimv2's add-ons is updated, a card at the bottom of Anki's
   main window says so once, with a link to what's new.
+
+### Changed
+- AnkiGlass no longer adds anything to the Tools menu: its settings, turning
+  it off and the log are all in Settings.
 
 ### Fixed
 - Turned off for the session, the glass stays off on every screen, instead
