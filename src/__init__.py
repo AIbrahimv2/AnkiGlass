@@ -72,6 +72,8 @@ CONFIG = {
 
 _state: dict = {}
 _orig_bg: dict = {}
+# Turned off for the session: no glass, on any screen, until Anki restarts.
+_turned_off = False
 
 
 def log(msg: str) -> None:
@@ -142,7 +144,7 @@ def request_alpha_format(stage: str) -> None:
 def in_glass_state() -> bool:
     from aqt import mw
 
-    return getattr(mw, "state", None) in CONFIG["glass_states"]
+    return not _turned_off and getattr(mw, "state", None) in CONFIG["glass_states"]
 
 
 def strip_widgets():
@@ -225,7 +227,7 @@ def glass_hidden() -> bool:
 def on_state_will_change(new_state: str, old_state: str) -> None:
     # Before the new state draws its bars, so the first paint already has the
     # right page background (transparent entering review, stock leaving it).
-    on = new_state in CONFIG["glass_states"] and not glass_hidden()
+    on = not _turned_off and new_state in CONFIG["glass_states"] and not glass_hidden()
     set_strips_glass(on, f"{old_state} -> {new_state}")
 
 
@@ -633,6 +635,8 @@ def revert() -> None:
             ob.msg(main_win, "setOpaque:", True,
                    restype=None, argtypes=[ctypes.c_bool])
     _state.clear()
+    global _turned_off
+    _turned_off = True
     log("reverted")
 
 

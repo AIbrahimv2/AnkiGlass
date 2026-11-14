@@ -13,6 +13,10 @@
 - When any of AIbrahimv2's add-ons is updated, a card at the bottom of Anki's
   main window says so once, with a link to what's new.
 
+### Fixed
+- Turned off for the session, the glass stays off on every screen, instead
+  of its styling coming back on the next screen.
+
 ## 1.1.0 - 2026-11-09
 
 ### Changed
