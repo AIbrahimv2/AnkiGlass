@@ -9,7 +9,9 @@ ownership of its own view and mouse/hover behaviour is unaffected.
 
 macOS only; on other platforms the add-on loads and does nothing. Toggle at
 runtime from Tools -> AnkiGlass. Tint, which screens, and card glass are set in
-the add-on's config (Anki -> Tools -> Add-ons -> AnkiGlass -> Config).
+its Settings (Tools -> AnkiGlass: settings and what's new, or Anki's Config
+button for the add-on), the shared add-on kit's window (src/kit/,
+settings_schema.py).
 """
 
 from __future__ import annotations
@@ -659,7 +661,10 @@ def add_menu() -> None:
     from aqt import mw
     from aqt.qt import QAction
 
+    from . import kit
+
     items = [
+        ("AnkiGlass: settings and what's new", lambda: kit.open_page(tab="settings")),
         ("AnkiGlass: turn off (this session)", revert),
         ("AnkiGlass: disable until re-enabled", disable_permanently),
     ]
@@ -743,4 +748,20 @@ def _install() -> None:
         log("early setup FAILED:\n" + traceback.format_exc())
 
 
+def _register_kit() -> None:
+    """The shared add-on kit: Settings, What's new and About in its window
+    (also on Anki's Config button), and the notice after updates."""
+    try:
+        from aqt import mw
+
+        from . import kit
+        from .settings_schema import NOTE, SCHEMA
+
+        kit.register("glass", schema=SCHEMA, note=NOTE)
+        mw.addonManager.setConfigAction(__name__, lambda: kit.open_page(tab="settings"))
+    except Exception:
+        log("kit setup FAILED:\n" + traceback.format_exc())
+
+
+_register_kit()
 _install()
