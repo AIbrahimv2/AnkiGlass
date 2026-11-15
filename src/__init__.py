@@ -8,9 +8,9 @@ borderless child window pinned behind a transparent main window, so Qt keeps
 ownership of its own view and mouse/hover behaviour is unaffected.
 
 macOS only; on other platforms the add-on loads and does nothing. Tint, which
-screens, card glass and turning it off are in its Settings (Anki's Config
-button for the add-on), the shared add-on kit's window (src/kit/,
-settings_schema.py).
+screens and card glass are in its Settings (Anki's Config button for the
+add-on), the shared add-on kit's window (src/kit/, settings_schema.py). To
+switch it off, turn it off in Tools -> Add-ons like any add-on.
 """
 
 from __future__ import annotations
@@ -28,7 +28,6 @@ except Exception:
     USER_DIR = ADDON_DIR
 LOG_PATH = os.path.join(USER_DIR, "anki_glass.log")
 MARKER_PATH = os.path.join(USER_DIR, "apply.marker")
-DISABLE_PATH = os.path.join(USER_DIR, "disabled")
 
 
 # --- config ------------------------------------------------------------------
@@ -71,8 +70,6 @@ CONFIG = {
 
 _state: dict = {}
 _orig_bg: dict = {}
-# Turned off from Settings: no glass, on any screen, until Anki restarts.
-_turned_off = False
 
 
 def log(msg: str) -> None:
@@ -143,7 +140,7 @@ def request_alpha_format(stage: str) -> None:
 def in_glass_state() -> bool:
     from aqt import mw
 
-    return not _turned_off and getattr(mw, "state", None) in CONFIG["glass_states"]
+    return getattr(mw, "state", None) in CONFIG["glass_states"]
 
 
 def strip_widgets():
@@ -175,18 +172,6 @@ def apply_window_qt_attrs() -> None:
         cw.setAutoFillBackground(False)
 
 
-def body_background_js(on: bool) -> str:
-    if on:
-        return (
-            "document.documentElement.style.setProperty('background','transparent','important');"
-            "document.body&&document.body.style.setProperty('background','transparent','important');"
-        )
-    return (
-        "document.documentElement.style.removeProperty('background');"
-        "document.body&&document.body.style.removeProperty('background');"
-    )
-
-
 def set_strips_glass(on: bool, why: str) -> None:
     """Flip the strips between transparent (glass) and their stock look."""
     from aqt.qt import Qt, QColor
@@ -210,14 +195,6 @@ def set_strips_glass(on: bool, why: str) -> None:
     log(f"strips {'GLASS' if on else 'stock'} ({why})")
 
 
-def set_strips_body_js(on: bool) -> None:
-    for name, w in strip_widgets():
-        try:
-            w.eval(body_background_js(on))
-        except Exception as e:
-            log(f"body js {name}: FAILED ({e})")
-
-
 def glass_hidden() -> bool:
     """The glass is taken away while Anki is full screen (see sync_glass_frame)."""
     return _state.get("window_glass") is False
@@ -226,7 +203,7 @@ def glass_hidden() -> bool:
 def on_state_will_change(new_state: str, old_state: str) -> None:
     # Before the new state draws its bars, so the first paint already has the
     # right page background (transparent entering review, stock leaving it).
-    on = not _turned_off and new_state in CONFIG["glass_states"] and not glass_hidden()
+    on = new_state in CONFIG["glass_states"] and not glass_hidden()
     set_strips_glass(on, f"{old_state} -> {new_state}")
 
 
@@ -612,82 +589,6 @@ def build_separate_glass_window() -> None:
 # --- recovery / wiring -------------------------------------------------------
 
 
-def revert() -> None:
-    """Remove the glass and restore the normal opaque window, live."""
-    import objc_bridge as ob
-
-    set_strips_glass(False, "revert")
-    set_strips_body_js(False)
-    if _state.get("strategy") == "separate":
-        from aqt import mw
-
-        main_win = _state.get("main_win")
-        glass_win = _state.get("glass_win")
-        fs = _state.pop("frame_sync", None)
-        if fs is not None:
-            mw.removeEventFilter(fs)
-        if main_win and glass_win:
-            ob.msg(main_win, "removeChildWindow:", glass_win,
-                   restype=None, argtypes=[ctypes.c_void_p])
-            ob.msg(glass_win, "orderOut:", None,
-                   restype=None, argtypes=[ctypes.c_void_p])
-            ob.msg(main_win, "setOpaque:", True,
-                   restype=None, argtypes=[ctypes.c_bool])
-    _state.clear()
-    global _turned_off
-    _turned_off = True
-    log("reverted")
-
-
-def glass_on() -> bool:
-    return _state.get("strategy") == "separate"
-
-
-def _refresh_screen() -> None:
-    """Redraw the deck list or overview without the glass."""
-    from aqt import mw
-
-    if mw.state == "deckBrowser":
-        mw.deckBrowser.refresh()
-    elif mw.state == "overview":
-        mw.overview.refresh()
-
-
-# --- the Settings window's buttons (settings_schema.schema) ---------------------
-
-
-def turn_off_now() -> str:
-    if glass_on():
-        revert()
-        _refresh_screen()
-    return "Turned off until you restart Anki."
-
-
-def keep_off() -> str:
-    try:
-        with open(DISABLE_PATH, "w") as f:
-            f.write(
-                "AnkiGlass stays off while this file is here. Turn it back on in its "
-                "settings (Tools > Add-ons > AnkiGlass > Config), or delete this file.\n"
-            )
-    except OSError as e:
-        return f"Couldn't turn it off: {e}"
-    if glass_on():
-        revert()
-        _refresh_screen()
-    return "Turned off. It stays off until you turn it back on here."
-
-
-def turn_back_on() -> str:
-    try:
-        os.remove(DISABLE_PATH)
-    except FileNotFoundError:
-        pass
-    except OSError as e:
-        return f"Couldn't turn it back on: {e}"
-    return "Turned back on. Restart Anki to get the glass."
-
-
 def show_log() -> None:
     from aqt.utils import showText
 
@@ -703,8 +604,6 @@ def on_main_window_did_init() -> None:
         return
     if ADDON_DIR not in sys.path:
         sys.path.insert(0, ADDON_DIR)
-    if os.path.exists(DISABLE_PATH):
-        return
     # Crash guard: if a previous apply killed the process, the marker survives
     # and we skip this launch so the user isn't locked into a broken state.
     if os.path.exists(MARKER_PATH):
@@ -728,7 +627,7 @@ def _install() -> None:
     from aqt.qt import QColor
 
     gui_hooks.main_window_did_init.append(on_main_window_did_init)
-    if sys.platform != "darwin" or os.path.exists(DISABLE_PATH):
+    if sys.platform != "darwin":
         return
     if ADDON_DIR not in sys.path:
         sys.path.insert(0, ADDON_DIR)
@@ -767,26 +666,15 @@ def _install() -> None:
 
 
 def _register_kit() -> None:
-    """The shared add-on kit: Settings (with turning it off), What's new and
-    About in its window on Anki's Config button, and the notice after
-    updates."""
+    """The shared add-on kit: Settings, What's new and About in its window
+    on Anki's Config button, and the notice after updates."""
     try:
         from aqt import mw
 
         from . import kit
         from .settings_schema import NOTE, schema
 
-        kit.register(
-            "glass",
-            schema=lambda: schema(glass_on(), os.path.exists(DISABLE_PATH), DEBUG),
-            note=NOTE,
-            actions={
-                "off_now": turn_off_now,
-                "keep_off": keep_off,
-                "turn_back_on": turn_back_on,
-                "show_log": show_log,
-            },
-        )
+        kit.register("glass", schema=schema(DEBUG), note=NOTE, actions={"show_log": show_log})
         mw.addonManager.setConfigAction(__name__, lambda: kit.open_page(tab="settings"))
     except Exception:
         log("kit setup FAILED:\n" + traceback.format_exc())

@@ -6,8 +6,6 @@
 - **Settings in a window of their own**, instead of Anki's raw config text:
   which screens get glass, glass behind the card, the tints and the log. Open
   it from the Config button in Tools → Add-ons.
-- Turning it off is in Settings too, for now or until you turn it back on
-  there (which you can now do without deleting a file).
 - The same window has What's new (this list of changes) and About (links,
   whether AnkiWeb has an update, and AIbrahimv2's other Anki add-ons, with an
   Install button).
@@ -15,12 +13,10 @@
   main window says so once, with a link to what's new.
 
 ### Changed
-- AnkiGlass no longer adds anything to the Tools menu: its settings, turning
-  it off and the log are all in Settings.
-
-### Fixed
-- Turned off for the session, the glass stays off on every screen, instead
-  of its styling coming back on the next screen.
+- AnkiGlass no longer adds anything to the Tools menu. Its settings and the
+  log are in Settings, and the two items that turned it off are gone: to
+  switch it off, turn it off in Tools → Add-ons, like any add-on. If you used
+  "disable until re-enabled", the glass comes back with this version.
 
 ## 1.1.0 - 2026-11-09
 

@@ -27,8 +27,8 @@ Restart Anki after installing.
 Tools → Add-ons → AnkiGlass → Config opens its Settings. See
 [`src/config.md`](src/config.md) for each option. In short: choose which
 screens get glass, whether the card area itself is glass, and the tint colour
-for light and dark mode. Settings also turn the glass off, for now or until
-you turn it back on there.
+for light and dark mode. To switch it off, turn AnkiGlass off in Tools →
+Add-ons, like any add-on.
 
 ## How it works
 
