@@ -18,7 +18,45 @@ https://github.com/AIbrahimv2/AnkiGlass/issues
 
 ## Supported Anki versions
 
-26.09.4 to 26.09.4 (lists as "26.09.4+"): the version it was tested on.
+Minimum 24.04, maximum 26.09.4 with no `-`, so newer versions get it too. The
+form turns 24.04 into "24.04.0", and the listing shows "24.04-26.09.4+".
+
+Anki says the code is invalid to anyone below the minimum. Until 2026-11-14
+both were 26.09.4, the version installed at the time, so only 26.09.4 and
+newer could install it. Checked after the change with
+`curl -s -o /dev/null --max-filesize 1 -w '%{http_code}' "https://ankiweb.net/shared/download/1866406123?v=2.1&p=<point version>"`:
+404 for 2.1.66, 23.10 and 23.12.1 (p=66, 231000, 231201), and 303 (a
+download) for 24.04 to 26.10 (240400 up).
+
+Why 24.04:
+
+- What AnkiGlass needs from Anki is old: `webview_will_set_content`, the
+  reviewer, deck browser, overview and state hooks, `mw.toolbarWeb`,
+  `mw.bottomWeb` and `mw.web`, and the toolbar and bottom bar markup it
+  styles (`.fancy .toolbar`, `.hitem`, `#outer`, `--border-radius-large`).
+  From Qt it needs only a translucent main window and clear web page
+  backgrounds. From macOS, `NSGlassEffectView` (macOS 26), or
+  `NSVisualEffectView` on older macOS. None of that ties it to a recent Anki.
+- The Settings, What's new and About window (the shared kit, from the release
+  after 1.1.0) is a web page whose stylesheet uses `color-mix()`, which needs
+  Chromium 111. 24.04 is the first release whose builds all ship Qt 6.6
+  (Chromium 112); 2.1.66 and 23.12 on Mac have Qt 6.5 (Chromium 108).
+- Up to 25.02, Anki runs add-ons on Python 3.9. AnkiGlass works there.
+
+Tested on 2026-11-14 with `tools/version_probe.py`, which opens a real Anki
+window on an empty profile with a copy of the add-on and checks, from inside
+Anki: the glass window behind the main window and matching its frame, the
+clear page backgrounds and glass CSS on the deck list, the overview, a review
+(question and answer), the Settings window, and full screen and back. All 68
+checks pass on 24.04 and 25.02.7 (Python 3.9, Qt 6.6), 25.07.5 and 25.09.4
+(Python 3.13, Qt 6.9), and 26.09.4 (Qt 6.11). The 1.1.0 code, which is what
+AnkiWeb serves, passes its 66 (it has no Settings window) on 24.04.
+
+Not tested: macOS before 26 (the `NSVisualEffectView` fallback; this Mac runs
+macOS 27), Intel Macs (`objc_bridge.py` assumes arm64), and the launcher's
+optional Qt 6.7 and 6.8 builds. In full screen the window reports itself as
+see-through again on every Qt tested, but its background is solid, so it
+looks normal.
 
 ## Description
 

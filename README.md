@@ -16,7 +16,9 @@ with frosted toolbar and bottom-bar controls and a theme-aware tint.
 
 ## Install
 
-- **From AnkiWeb:** search for “AnkiGlass” in Tools → Add-ons → Get Add-ons.
+- **From AnkiWeb:** in Tools → Add-ons → Get Add-ons, paste the code
+  `1866406123`. It needs Anki 24.04 or newer. See the
+  [AnkiWeb page](https://ankiweb.net/shared/info/1866406123).
 - **From a build:** run `./build.sh` and double-click `dist/anki-glass.ankiaddon`,
   or in Anki use Tools → Add-ons → Install from file.
 
