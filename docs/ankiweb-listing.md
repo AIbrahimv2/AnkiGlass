@@ -10,7 +10,43 @@ Keep this in step with the live listing; the release steps are in the
 
 ## Tags
 
-macos appearance theme liquid-glass ui
+liquid glass macos tahoe theme transparent transparency translucent blur frosted glass vibrancy aesthetic beautify skin ui appearance mac apple
+
+## Search
+
+Searched on 2026-11-15, before and after the tags above replaced the old
+ones, with the `ankiweb_search.py` approach from the `anki-addon-release`
+skill. "Results" is how many add-ons match now. AnkiWeb sorts results by
+ratings, so an add-on without ratings comes after every rated match; the
+words only decide whether it shows up.
+
+- Tags match whole words. "study plan" didn't find the tag "study planner",
+  while the title and description match parts of words ("mac" finds
+  "macOS"). So the tags spell out the exact words people type.
+- Neighbouring tags read as a phrase, so their order matters.
+- Left out on purpose: "dark mode" (AnkiGlass isn't a dark theme; the
+  description already mentions light and dark mode), and "acrylic" or
+  "mica", Windows' words for it.
+
+| Search | Results | Before | After |
+| --- | --- | --- | --- |
+| glass | 44 | #12 | #12 |
+| liquid glass | 5 | #3 | #3 |
+| frosted | 14 | #5 | #3 |
+| transparent | 57 | absent | #28 |
+| transparency | 23 | absent | #11 |
+| translucent | 12 | absent | #6 |
+| blur | 36 | absent | #21 |
+| vibrancy | 1 | absent | #1 |
+| tahoe | 7 | #7 | #7 |
+| theme | 359 | #238 | #216 |
+| aesthetic | 29 | absent | #17 |
+| beautify | 10 | absent | #8 |
+| skin | 63 | absent | #37 |
+| appearance | 74 | #50 | #43 |
+| background | 349 | #200 | #188 |
+| macos | 371 | #185 | #162 |
+| apple | 76 | #41 | #40 |
 
 ## Support page
 
