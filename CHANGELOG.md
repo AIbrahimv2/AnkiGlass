@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- **A wider Settings, What's new and About window**, with its tabs along the
+  top: each version's changes sit beside its number, and the other add-ons
+  are laid out as cards.
+
 ## 1.2.0 - 2026-11-17
 
 ### Added
