@@ -4,6 +4,11 @@ What's in the AnkiWeb add-on form (https://ankiweb.net/shared/upload?id=18664061
 Keep this in step with the live listing; the release steps are in the
 `anki-addon-release` skill (see CLAUDE.md).
 
+## Package on AnkiWeb
+
+Version 1.2.0, uploaded 2026-11-17. The release script (`release.py --uploaded`
+in the `anki-addon-release` skill) updates this line after each upload.
+
 ## Title
 
 🫧 AnkiGlass: native macOS Liquid Glass for Anki
