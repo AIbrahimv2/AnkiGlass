@@ -107,7 +107,7 @@ Give Anki's main window Apple's Liquid Glass look on your Mac. The deck list, a 
 - Hovering and pop-ups (like AMBOSS) work as usual.
 - In full screen, Anki keeps its normal look, since there's nothing behind the window to see through. The glass comes back when you leave full screen.
 
-**Settings:** Tools → Add-ons → AnkiGlass → Config. Choose which screens get glass, whether the card itself is glass, and the tint for light and dark mode. Changes apply after restarting Anki. To switch it off, use **AnkiGlass: turn off** in the Tools menu.
+**Settings:** Tools → Add-ons → AnkiGlass → Config. Choose which screens get glass, whether the card itself is glass, and the tint for light and dark mode. Changes apply after restarting Anki. To switch it off, turn it off in Tools → Add-ons.
 
 **Good to know**
 
