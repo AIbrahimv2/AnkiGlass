@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 - 2026-11-17
 
 ### Added
 - **Settings in a window of their own**, instead of Anki's raw config text:
