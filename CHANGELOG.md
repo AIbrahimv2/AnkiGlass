@@ -6,6 +6,13 @@
 - **A wider Settings, What's new and About window**, with its tabs along the
   top: each version's changes sit beside its number, and the other add-ons
   are laid out as cards.
+- **The signature at the end of About signs itself**, stroke by stroke, as
+  if written by hand when you scroll to it.
+- Add-on emoji stand on their own now, without a box around them.
+- About ends with links to AIbrahimv2's LinkedIn and Instagram, under the
+  signature.
+- **A colour picker for the tints** in Settings, with an opacity slider,
+  instead of typing rgba() by hand. You can still type any colour.
 
 ## 1.2.0 - 2026-11-17
 
