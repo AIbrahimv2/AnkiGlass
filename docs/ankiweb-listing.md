@@ -110,9 +110,9 @@ Give Anki's main window Apple's Liquid Glass look on your Mac. The deck list, a 
 
 **Code: 1866406123.** Paste it in Anki under **Tools → Add-ons → Get Add-ons**. Needs Anki 24.04 or newer, on a Mac.
 
-<p><img src="https://github.com/user-attachments/assets/c82c5078-d561-4fa1-bf7e-1bb67de85388" alt="The deck list on Liquid Glass" width="100%"></p>
+<p><img src="https://raw.githubusercontent.com/AIbrahimv2/AnkiGlass/main/docs/screenshot.png" alt="The deck list on Liquid Glass" width="100%"></p>
 
-<p><img src="https://github.com/user-attachments/assets/678ff45c-b262-49bd-a36d-943fbe8a74e9" alt="Reviewing a card on Liquid Glass" width="100%"></p>
+<p><img src="https://raw.githubusercontent.com/AIbrahimv2/AnkiGlass/main/docs/review.png" alt="Reviewing a card on Liquid Glass, with the answer buttons in glass" width="100%"></p>
 
 **Features**
 
