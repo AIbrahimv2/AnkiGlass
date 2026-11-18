@@ -5,7 +5,10 @@
 Gives Anki's main window a real AppKit NSGlassEffectView (macOS 26 "Tahoe"),
 falling back to NSVisualEffectView vibrancy on older macOS. The glass lives in a
 borderless child window pinned behind a transparent main window, so Qt keeps
-ownership of its own view and mouse/hover behaviour is unaffected.
+ownership of its own view and mouse/hover behaviour is unaffected. The
+windows of its sibling add-ons (Stepwise, Skim, Exam Timeline, the shared
+kit's Settings window) get the same glass when they ask for it through the
+kit: see windows.py.
 
 macOS only; on other platforms the add-on loads and does nothing. Tint, which
 screens and card glass are in its Settings (Anki's Config button for the
@@ -35,6 +38,7 @@ MARKER_PATH = os.path.join(USER_DIR, "apply.marker")
 _DEFAULTS = {
     "glass_screens": ["deckBrowser", "overview", "review"],
     "glass_card": True,
+    "glass_windows": True,
     "tint_dark": "rgba(0,0,0,0.28)",
     "tint_light": "rgba(255,255,255,0.35)",
     "debug_log": False,
@@ -268,27 +272,34 @@ th{border-bottom-color:var(--lg-hi) !important}
 .current td,tr:hover:not(.top-level-drag-row) td{background:var(--lg-hover) !important}
 """
 
-CONTENT_UNCOVER_JS = r"""
-(function(){
-  var vw=window.innerWidth, vh=window.innerHeight, area=vw*vh, hits=[];
-  var els=[document.body].concat(
-      Array.prototype.slice.call(document.querySelectorAll('body *')));
+# Clears the opaque backgrounds a note type paints over most of the card
+# (body, wrappers) in the window `w`, so the glass reads through. Shared by
+# the reviewer (CONTENT_UNCOVER_JS) and the card frames of add-on windows
+# with glass (windows.py), so a card looks the same in both.
+UNCOVER_FN = r"""
+function(w){
+  var d=w.document, vw=w.innerWidth, vh=w.innerHeight, area=vw*vh, hits=[];
+  if(!d.body) return '';
+  var els=[d.body].concat(
+      Array.prototype.slice.call(d.querySelectorAll('body *')));
   for (var i=0;i<els.length;i++){
-    var el=els[i], cs=getComputedStyle(el), bg=cs.backgroundColor;
+    var el=els[i], cs=w.getComputedStyle(el), bg=cs.backgroundColor;
     var m=bg.match(/rgba?\(([^)]+)\)/), a=0;
     if(m){ var p=m[1].split(',').map(parseFloat); a=p.length>3?p[3]:1; }
     var hasImg=cs.backgroundImage!=='none';
     if(a<0.95 && !hasImg) continue;
     var r=el.getBoundingClientRect();
-    if(el!==document.body && r.width*r.height<area*0.4) continue;
+    if(el!==d.body && r.width*r.height<area*0.4) continue;
     if(a>=0.95) el.style.setProperty('background-color','transparent','important');
     if(hasImg) el.style.setProperty('background-image','none','important');
     var cls=(typeof el.className==='string'&&el.className.trim())?'.'+el.className.trim().split(/\s+/).join('.'):'';
     hits.push(el.tagName.toLowerCase()+(el.id?'#'+el.id:'')+cls+' '+Math.round(r.width)+'x'+Math.round(r.height)+' '+bg);
   }
   return hits.join(' | ');
-})()
-"""
+}
+""".strip()
+
+CONTENT_UNCOVER_JS = f"({UNCOVER_FN})(window)"
 
 
 _uncover_seen: set = set()
@@ -423,6 +434,33 @@ def build_glass(ob, bounds):
 
 # --- separate glass window (no re-parent; hover-safe) ------------------------
 
+def make_glass_window(ob, frame):
+    """A borderless window on `frame`, filled with glass (build_glass), that
+    lets clicks through: it goes right behind a see-through window of Anki's,
+    as its child. (window, glass view), or (None, None) if AppKit won't make
+    one. The add-on windows' glass (windows.py) is made here too."""
+    glass_win = ob.msg(
+        ob.msg(ob.cls("NSWindow"), "alloc"),
+        "initWithContentRect:styleMask:backing:defer:",
+        frame, NSWindowStyleMaskBorderless, NSBackingStoreBuffered, False,
+        argtypes=[ob.CGRect, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_bool],
+    )
+    if not glass_win:
+        return None, None
+    clear = ob.msg(ob.cls("NSColor"), "clearColor")
+    for sel, val in (("setOpaque:", False), ("setIgnoresMouseEvents:", True),
+                     ("setHasShadow:", False)):
+        ob.msg(glass_win, sel, val, restype=None, argtypes=[ctypes.c_bool])
+    ob.msg(glass_win, "setBackgroundColor:", clear,
+           restype=None, argtypes=[ctypes.c_void_p])
+
+    glass = build_glass(ob, ob.CGRect(ob.CGPoint(0, 0),
+                                      ob.CGSize(frame.size.width, frame.size.height)))
+    ob.msg(glass_win, "setContentView:", glass,
+           restype=None, argtypes=[ctypes.c_void_p])
+    return glass_win, glass
+
+
 def is_fullscreen() -> bool:
     """Anki is full screen: macOS's own (the green button, View > Full Screen),
     which sets the window's full-screen style from the start of the animation,
@@ -544,26 +582,11 @@ def build_separate_glass_window() -> None:
     frame = ob.msg(main_win, "frame", restype=ob.CGRect)
     log(f"main NSWindow {hex(main_win)} frame {frame}")
 
-    glass_win = ob.msg(
-        ob.msg(ob.cls("NSWindow"), "alloc"),
-        "initWithContentRect:styleMask:backing:defer:",
-        frame, NSWindowStyleMaskBorderless, NSBackingStoreBuffered, False,
-        argtypes=[ob.CGRect, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_bool],
-    )
+    glass_win, glass = make_glass_window(ob, frame)
     if not glass_win:
         log("ABORT: could not create glass window")
         return
     clear = ob.msg(ob.cls("NSColor"), "clearColor")
-    for sel, val in (("setOpaque:", False), ("setIgnoresMouseEvents:", True),
-                     ("setHasShadow:", False)):
-        ob.msg(glass_win, sel, val, restype=None, argtypes=[ctypes.c_bool])
-    ob.msg(glass_win, "setBackgroundColor:", clear,
-           restype=None, argtypes=[ctypes.c_void_p])
-
-    glass = build_glass(ob, ob.CGRect(ob.CGPoint(0, 0),
-                                      ob.CGSize(frame.size.width, frame.size.height)))
-    ob.msg(glass_win, "setContentView:", glass,
-           restype=None, argtypes=[ctypes.c_void_p])
 
     # Child window: tracks the parent's position and stays directly behind it.
     ob.msg(main_win, "addChildWindow:ordered:", glass_win, NSWindowBelow,
@@ -632,7 +655,17 @@ def _install() -> None:
     if ADDON_DIR not in sys.path:
         sys.path.insert(0, ADDON_DIR)
 
+    try:
+        from . import windows
+    except Exception:
+        windows = None
+
     def css_hook(web_content, context):
+        if windows is not None and windows.has_glass(context):
+            # A page in an add-on window with glass: the kit's theme does the rest.
+            web_content.head += windows.page_head()
+            windows.clear_pages(context.window())
+            return
         ctx = type(context).__name__
         is_bar = any(s in ctx for s in ("Toolbar", "BottomBar"))
         is_content = ctx in CONTENT_CONTEXTS and CONFIG["content_glass"]
@@ -674,7 +707,17 @@ def _register_kit() -> None:
         from . import kit
         from .settings_schema import NOTE, schema
 
-        kit.register("glass", schema=schema(DEBUG), note=NOTE, actions={"show_log": show_log})
+        # The other add-ons' windows ask for glass through the kit (kit.glass).
+        glass_window = None
+        try:
+            from . import windows
+
+            windows.setup(bool(_ucfg["glass_windows"]))
+            glass_window = windows.glass_window
+        except Exception:
+            log("window glass setup FAILED:\n" + traceback.format_exc())
+        kit.register("glass", schema=schema(DEBUG), note=NOTE, actions={"show_log": show_log},
+                     glass_window=glass_window)
         mw.addonManager.setConfigAction(__name__, lambda: kit.open_page(tab="settings"))
         if sys.platform == "darwin":
             from aqt import gui_hooks

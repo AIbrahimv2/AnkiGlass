@@ -5,8 +5,12 @@ Changes apply on the next Anki restart.
 - **glass_screens** — which main-window screens get the glass effect. Any of
   `"deckBrowser"` (deck list), `"overview"` (a deck's overview), `"review"`
   (the reviewer). Remove one to leave that screen stock.
-- **glass_card** — `true` makes the card area itself glass; `false` keeps the
-  card opaque and glasses only the top and bottom bars.
+- **glass_card** — `true` makes the card area itself glass, in review and in
+  Skim's card; `false` keeps the card opaque and glasses only the top and
+  bottom bars.
+- **glass_windows** — `true` puts the glass behind the windows of AnkiGlass's
+  sibling add-ons (Stepwise, Skim and Exam Timeline, when you have them) and
+  behind AnkiGlass's own Settings window; `false` keeps them solid.
 - **tint_dark** / **tint_light** — the tint painted over the glass in dark and
   light mode, as any CSS colour. Raise the alpha (e.g. `rgba(0,0,0,0.4)`) for
   more contrast behind text; use `"transparent"` for raw, untinted glass.

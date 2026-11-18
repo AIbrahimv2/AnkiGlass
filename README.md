@@ -29,8 +29,9 @@ Restart Anki after installing.
 Tools → AnkiGlass Options... opens its Settings (so does Tools → Add-ons →
 AnkiGlass → Config). See
 [`src/config.md`](src/config.md) for each option. In short: choose which
-screens get glass, whether the card area itself is glass, and the tint colour
-for light and dark mode. To switch it off, turn AnkiGlass off in Tools →
+screens get glass, whether the card area itself is glass, whether AnkiGlass's
+sibling add-ons' windows get glass too, and the tint colour for light and dark
+mode. To switch it off, turn AnkiGlass off in Tools →
 Add-ons, like any add-on.
 
 ## How it works
@@ -45,6 +46,13 @@ does not replace the widget engine. Instead it:
    of its own view and mouse hover (e.g. AMBOSS pop-ups) keeps working.
 3. Injects small, scoped CSS into Anki's toolbar, bottom bar, and card pages to
    make their backgrounds transparent and style the controls as frosted glass.
+
+The windows of its sibling add-ons ([Stepwise](https://github.com/AIbrahimv2/AnkiStepwise),
+[Skim](https://github.com/AIbrahimv2/AnkiSkim),
+[Exam Timeline](https://github.com/AIbrahimv2/AnkiExamTimeline), and the
+Settings, What's new and About window they share) ask for the same glass
+through their shared kit (`kit.glass(window)`); `src/windows.py` puts it
+behind each one, and the kit's theme makes their pages see-through.
 
 It talks to the Objective-C runtime through `ctypes` (see `objc_bridge.py`) —
 the same technique Anki itself uses for its bundled macOS helper — because Anki

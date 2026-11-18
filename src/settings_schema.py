@@ -27,7 +27,13 @@ SCHEMA = [
                 "key": "glass_card",
                 "type": "switch",
                 "label": "Glass behind the card",
-                "hint": "Off keeps the card solid and puts glass only on the bars above and below it.",
+                "hint": "In review and in Skim. Off keeps the card solid and puts glass only on the bars above and below it.",
+            },
+            {
+                "key": "glass_windows",
+                "type": "switch",
+                "label": "Glass on add-on windows",
+                "hint": "Stepwise's, Skim's and Exam Timeline's windows, and this one. Off keeps them solid.",
             },
         ],
     },
@@ -80,6 +86,7 @@ def schema(logging: bool) -> list:
 PREVIEW_CONFIG = {
     "glass_screens": ["deckBrowser", "overview", "review"],
     "glass_card": True,
+    "glass_windows": True,
     "tint_dark": "rgba(0,0,0,0.38)",
     "tint_light": "rgba(255,255,255,0.35)",
     "debug_log": False,

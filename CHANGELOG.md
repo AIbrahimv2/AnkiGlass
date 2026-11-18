@@ -5,6 +5,12 @@
 ### Added
 - **Tools → AnkiGlass Options...** opens Settings, so you no longer have to
   find it under Tools → Add-ons → Config.
+- **Glass on your other add-ons' windows.** Stepwise's, Skim's and Exam
+  Timeline's windows, and this Settings, What's new and About window, get
+  the same glass as Anki's main window, with the same tint. Headers turn
+  solid while a list scrolls under them, so it doesn't show through. Skim's
+  card is glass too, as in review, while **Glass behind the card** is on. **Glass on add-on
+  windows** in Settings turns it all off.
 
 ### Changed
 - **A wider Settings, What's new and About window**, with its tabs along the
