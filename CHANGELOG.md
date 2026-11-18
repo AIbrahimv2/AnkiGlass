@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **⌘S saves Settings** (Ctrl+S on Windows and Linux).
+
+### Fixed
+- Save and Close in Settings sit in a bar across the bottom of the window,
+  like the tabs across its top, instead of a narrower panel partway down it.
+
 ## 1.3.0 - 2026-11-17
 
 ### Added
