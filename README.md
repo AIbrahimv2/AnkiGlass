@@ -10,9 +10,9 @@ with frosted toolbar and bottom-bar controls and a theme-aware tint.
 
 ## Screenshots
 
-<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 06 39" src="https://github.com/user-attachments/assets/c82c5078-d561-4fa1-bf7e-1bb67de85388" />
-<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 07 04" src="https://github.com/user-attachments/assets/69c2b21c-4a2a-456e-b90c-b475f38c6885" />
-<img width="1800" height="1169" alt="Screenshot 2026-09-06 at 10 04 10" src="https://github.com/user-attachments/assets/678ff45c-b262-49bd-a36d-943fbe8a74e9" />
+<img src="docs/screenshot.png" width="100%" alt="The deck list on Liquid Glass">
+
+<img src="docs/review.png" width="100%" alt="Reviewing a card on Liquid Glass, with the answer buttons in glass">
 
 ## Install
 
@@ -26,7 +26,8 @@ Restart Anki after installing.
 
 ## Configuration
 
-Tools → Add-ons → AnkiGlass → Config opens its Settings. See
+Tools → AnkiGlass Options... opens its Settings (so does Tools → Add-ons →
+AnkiGlass → Config). See
 [`src/config.md`](src/config.md) for each option. In short: choose which
 screens get glass, whether the card area itself is glass, and the tint colour
 for light and dark mode. To switch it off, turn AnkiGlass off in Tools →
@@ -64,6 +65,12 @@ does not ship PyObjC.
 - Source lives in `src/`. Symlink or copy it into your Anki add-ons folder as
   `anki_glass` to test, then restart Anki.
 - `./build.sh` packages `src/` into `dist/anki-glass.ankiaddon`.
+- `python3 tools/screenshots.py` renders `docs/screenshot.png` and
+  `docs/review.png` (used here and on AnkiWeb) with the add-ons' shared
+  screenshot tools in the kit (`../anki-addon-kit/screenshots`): Anki's own
+  pages with this add-on's CSS, on macOS Tahoe's dark wallpaper. The card
+  under review is a real AnKing card with a CC0 image, rendered
+  from a copy of your collection.
 
 ## License
 
