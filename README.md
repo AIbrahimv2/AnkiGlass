@@ -10,9 +10,7 @@ with frosted toolbar and bottom-bar controls and a theme-aware tint.
 
 ## Screenshots
 
-<img src="docs/screenshot.png" width="100%" alt="The deck list on Liquid Glass">
-
-<img src="docs/review.png" width="100%" alt="Reviewing a card on Liquid Glass, with the answer buttons in glass">
+<img src="docs/screenshot.png" width="100%" alt="The deck list and a card under review on Liquid Glass, side by side, with the toolbar and the answer buttons in glass">
 
 ## Install
 
@@ -73,9 +71,10 @@ does not ship PyObjC.
 - Source lives in `src/`. Symlink or copy it into your Anki add-ons folder as
   `anki_glass` to test, then restart Anki.
 - `./build.sh` packages `src/` into `dist/anki-glass.ankiaddon`.
-- `python3 tools/screenshots.py` renders `docs/screenshot.png` and
-  `docs/review.png` (used here and on AnkiWeb) with the add-ons' shared
-  screenshot tools in the kit (`../anki-addon-kit/screenshots`): Anki's own
+- `python3 tools/screenshots.py` renders `docs/screenshot.png`, the deck
+  list and a review side by side (used here and on AnkiWeb), with the
+  add-ons' shared screenshot tools in the kit
+  (`../anki-addon-kit/screenshots`): Anki's own
   pages with this add-on's CSS, on macOS Tahoe's dark wallpaper. The card
   under review is a real AnKing card with a CC0 image, rendered
   from a copy of your collection.

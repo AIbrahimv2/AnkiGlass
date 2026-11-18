@@ -3,10 +3,11 @@
 
     python3 tools/screenshots.py [--collection PATH] [--note ID] [--capture-wallpaper | --wallpaper PATH]
 
-Writes docs/screenshot.png, the deck list on Liquid Glass, and
-docs/review.png, a card under review with the answer buttons in glass:
-Anki's main window with this add-on's own CSS (src/__init__.py) and its
-glass drawn as the wallpaper behind the window, blurred, under its tint.
+Writes docs/screenshot.png: the deck list on Liquid Glass beside a card
+under review with the answer buttons in glass, as one image, unlabelled
+since they speak for themselves. Each is Anki's main window with this
+add-on's own CSS (src/__init__.py) and its glass drawn as the wallpaper
+behind the window, blurred, under its tint.
 
 The card is a real one from the AnKing Step Deck ("The large intestine is
 characterized histologically by abundant goblet cells"), rendered by Anki
@@ -19,7 +20,7 @@ anyone's copy of the deck. Without a collection it falls back to a made-up
 card. The decks are made up.
 
 The window is a little taller than the kit's usual main window, so the
-card's image and credit show whole, and both images share that size.
+card's image and credit show whole, and both windows share that size.
 
 They're made with the add-ons' shared screenshot tools, in the kit's
 checkout next to this one (../anki-addon-kit/screenshots/shots.py, or set
@@ -63,14 +64,11 @@ def main() -> None:
         s.capture([{"url": url, "width": size[0], "height": size[1], "setup": "window.shotReady",
                     "transparent": True, "wait": 1200, "out": f"{name}.png"}  # the card's image loads
                    for name, url in (("deck", deck), ("review", review))])
-        written = s.frames([
-            {"image": "deck.png", "size": size, "title": "User 1 - Anki", "tint": glass["tint"],
-             "out": "screenshot.png"},
-            {"image": "review.png", "size": size, "title": "User 1 - Anki", "tint": glass["tint"],
-             "out": "review.png"},
-        ], shots.wallpaper_for(args, s), DOCS)
-    for out in written:
-        print("wrote", os.path.relpath(out, ROOT))
+        out = s.side_by_side([
+            {"image": "deck.png", "size": size, "title": "User 1 - Anki", "tint": glass["tint"]},
+            {"image": "review.png", "size": size, "title": "User 1 - Anki", "tint": glass["tint"]},
+        ], None, shots.wallpaper_for(args, s), os.path.join(DOCS, "screenshot.png"))
+    print("wrote", os.path.relpath(out, ROOT))
 
 
 if __name__ == "__main__":
