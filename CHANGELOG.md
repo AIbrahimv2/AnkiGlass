@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.0 - 2026-11-17
 
 ### Added
 - **⌘S saves Settings** (Ctrl+S on Windows and Linux).
