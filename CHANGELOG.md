@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 - 2026-11-17
 
 ### Added
 - **Tools → AnkiGlass Options...** opens Settings, so you no longer have to
