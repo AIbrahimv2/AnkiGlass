@@ -108,7 +108,9 @@ line and the screenshot first, the signature last.
 ```markdown
 Give Anki's main window Apple's Liquid Glass look on your Mac. The deck list, a deck's overview and the review screen get a frosted, see-through background that softly shows your desktop and other windows behind Anki, with the toolbar and the buttons at the bottom in matching glass.
 
-**Code: 1866406123.** Paste it in Anki under **Tools → Add-ons → Get Add-ons**. Needs Anki 24.04 or newer, on a Mac.
+**macOS only.** On Windows and Linux it does nothing.
+
+**Code: 1866406123.** Paste it in Anki under **Tools → Add-ons → Get Add-ons**.
 
 <p><img src="https://raw.githubusercontent.com/AIbrahimv2/AnkiGlass/main/docs/screenshot.png" alt="The deck list and a card under review on Liquid Glass, side by side, with the toolbar and the answer buttons in glass" width="100%"></p>
 
@@ -118,12 +120,12 @@ Give Anki's main window Apple's Liquid Glass look on your Mac. The deck list, a 
 - Works in light and dark mode, with a tint behind the text that you can adjust.
 - Hovering and pop-ups (like AMBOSS) work as usual.
 - In full screen, Anki keeps its normal look, since there's nothing behind the window to see through. The glass comes back when you leave full screen.
+- AIbrahimv2's other add-ons get the same glass on their windows: [Stepwise](https://ankiweb.net/shared/info/1949793886), [Exam Timeline](https://ankiweb.net/shared/info/341595498), and the Settings, What's new and About window they share.
 
-**Settings:** Tools → Add-ons → AnkiGlass → Config. Choose which screens get glass, whether the card itself is glass, and the tint for light and dark mode. Changes apply after restarting Anki. To switch it off, turn it off in Tools → Add-ons.
+**Settings:** open Tools → AnkiGlass Options... to choose which screens get glass, whether the card itself is glass, whether the other add-ons' windows get glass, and the tint for light and dark mode. Changes apply after restarting Anki. To switch it off, turn it off in Tools → Add-ons.
 
 **Good to know**
 
-- Mac only. On Windows and Linux it does nothing.
 - If you use a tiling window manager, it may try to arrange the glass behind Anki. If it does, exclude Anki in the manager's settings.
 
 Source, changelog and issues: [github.com/AIbrahimv2/AnkiGlass](https://github.com/AIbrahimv2/AnkiGlass)
