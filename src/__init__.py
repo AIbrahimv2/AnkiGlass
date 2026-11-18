@@ -676,8 +676,31 @@ def _register_kit() -> None:
 
         kit.register("glass", schema=schema(DEBUG), note=NOTE, actions={"show_log": show_log})
         mw.addonManager.setConfigAction(__name__, lambda: kit.open_page(tab="settings"))
+        if sys.platform == "darwin":
+            from aqt import gui_hooks
+
+            gui_hooks.main_window_did_init.append(_add_tools_item)
     except Exception:
         log("kit setup FAILED:\n" + traceback.format_exc())
+
+
+def _add_tools_item() -> None:
+    """Tools -> AnkiGlass Options..., the same Settings as the Config button,
+    named like other add-ons' settings items. Mac only, like the glass."""
+    try:
+        from aqt import mw
+        from aqt.qt import QAction, qconnect
+
+        from . import kit
+
+        action = QAction("AnkiGlass Options...", mw)
+        # Qt on a Mac moves items it takes for settings into the app menu;
+        # keep this one in Tools.
+        action.setMenuRole(QAction.MenuRole.NoRole)
+        qconnect(action.triggered, lambda: kit.open_page(tab="settings"))
+        mw.form.menuTools.addAction(action)
+    except Exception:
+        log("Tools item FAILED:\n" + traceback.format_exc())
 
 
 _register_kit()

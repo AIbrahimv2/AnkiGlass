@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+- **Tools → AnkiGlass Options...** opens Settings, so you no longer have to
+  find it under Tools → Add-ons → Config.
+
 ### Changed
 - **A wider Settings, What's new and About window**, with its tabs along the
   top: each version's changes sit beside its number, and the other add-ons
