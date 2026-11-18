@@ -10,9 +10,12 @@
   if written by hand when you scroll to it.
 - Add-on emoji stand on their own now, without a box around them.
 - About ends with links to AIbrahimv2's LinkedIn and Instagram, under the
-  signature.
+  signature, and the signature opens AIbrahimv2's website.
 - **A colour picker for the tints** in Settings, with an opacity slider,
   instead of typing rgba() by hand. You can still type any colour.
+- **⌘, opens Settings** on a Mac while AnkiGlass's window (Settings, What's
+  new or About) is in front, instead of Anki's Preferences. Anywhere else
+  it still opens Anki's.
 
 ## 1.2.0 - 2026-11-17
 
