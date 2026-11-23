@@ -12,8 +12,9 @@ behind the window, blurred, under its tint.
 The card is a real one from the AnKing Step Deck ("The large intestine is
 characterized histologically by abundant goblet cells"), rendered by Anki
 with AnKing's note type from a copy of your collection (--collection, the
-Default profile's unless named). Its image is CC0 (Berkshire Community
-College Bioscience Image Library, via Wikimedia Commons), and it was chosen
+kept copy in ~/anki-collection-copy unless named). Its image is CC0
+(Berkshire Community College Bioscience Image Library, via Wikimedia
+Commons), and it was chosen
 from the cards with openly licensed images for showing whole, credit and
 all, in the window. AnKing notes keep their IDs, so --note finds it in
 anyone's copy of the deck. Without a collection it falls back to a made-up
