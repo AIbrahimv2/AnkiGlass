@@ -4,6 +4,9 @@
 
 ### Changed
 - About lists Skim with an Install button, now that it's on AnkiWeb.
+- **Settings, What's new and About are one surface** from top to bottom: the
+  header, the tabs and the Save and Close bar no longer sit on bands of their
+  own. Only what's between them scrolls, and it fades out at its edges.
 
 ### Fixed
 - **Again, Hard, Good and Easy are glass too**, like the other buttons in
