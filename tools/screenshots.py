@@ -12,7 +12,8 @@ behind the window, blurred, under its tint.
 The card is a real one from the AnKing Step Deck ("The large intestine is
 characterized histologically by abundant goblet cells"), rendered by Anki
 with AnKing's note type from a copy of your collection (--collection, the
-kept copy in ~/anki-collection-copy unless named). Its image is CC0
+kept copy in ~/Documents/Projects/anki/work/collection-copy
+unless named). Its image is CC0
 (Berkshire Community College Bioscience Image Library, via Wikimedia
 Commons), and it was chosen
 from the cards with openly licensed images for showing whole, credit and
