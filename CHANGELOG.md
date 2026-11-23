@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.5.0 - 2026-11-23
 
 ### Changed
 - About lists Skim with an Install button, now that it's on AnkiWeb.
