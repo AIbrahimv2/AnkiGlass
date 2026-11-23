@@ -6,7 +6,7 @@ Keep this in step with the live listing; the release steps are in the
 
 ## Package on AnkiWeb
 
-Version 1.4.0, uploaded 2026-11-17. The release script (`release.py --uploaded`
+Version 1.5.0, uploaded 2026-11-23. The release script (`release.py --uploaded`
 in the `anki-addon-release` skill) updates this line after each upload.
 
 ## Title
