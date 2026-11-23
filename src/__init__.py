@@ -236,8 +236,10 @@ body.fancy .hitem:active{background:var(--lg-fill) !important}
 body:not(.fancy) .header{border-bottom:none !important}
 """
 
-# Bottom bar: every button gets the glass edge; ease buttons keep whatever
-# background they have (add-ons colour them), the rest get the glass fill.
+# Bottom bar: every button gets the glass edge and fill. The answer buttons'
+# fill is not !important and is the only rule here that isn't, so a colour an
+# add-on gives them (inline, or !important) still wins over it; it only
+# replaces Anki's own solid grey.
 GLASS_BOTTOM_CSS = """
 #outer{border-top:none !important}
 button{border:1px solid transparent !important;color:var(--fg) !important;
@@ -245,6 +247,8 @@ button{border:1px solid transparent !important;color:var(--fg) !important;
   box-shadow:inset 0 0 0 1px var(--lg-hi),0 4px 12px var(--lg-shadow) !important}
 button:not([id^=ease]):not(#defease):not([data-ease]){background:var(--lg-fill) !important}
 button:not([id^=ease]):not(#defease):not([data-ease]):hover{background:var(--lg-hover) !important}
+#outer button[data-ease],#outer button[id^=ease],#outer button#defease{background:var(--lg-fill)}
+#outer button[data-ease]:hover,#outer button[id^=ease]:hover,#outer button#defease:hover{background:var(--lg-hover)}
 button:focus{box-shadow:inset 0 0 0 1px var(--border-focus),0 4px 12px var(--lg-shadow) !important}
 """
 

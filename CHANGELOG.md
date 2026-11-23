@@ -5,6 +5,11 @@
 ### Changed
 - About lists Skim with an Install button, now that it's on AnkiWeb.
 
+### Fixed
+- **Again, Hard, Good and Easy are glass too**, like the other buttons in
+  review, instead of Anki's solid grey. Buttons another add-on colours keep
+  their colours.
+
 ## 1.4.0 - 2026-11-17
 
 ### Added
